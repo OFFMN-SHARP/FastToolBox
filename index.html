@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html id="Window">
+<head>
+    <meta charset="UTF-8" />
+    <title>FastToolBox</title>
+</head>
+<style>
+    #Win_event_close {
+        position: absolute;
+        background-color: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+        text-shadow: 10px 10px 10px yellow;
+    }
+    #Win_event_close:hover {
+        background-color: red;
+        border: 3px solid white;
+    }
+    #Win_event_close:active {
+        background-color: darkred;
+    }
+    #run {
+        background-color: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    #run:hover {
+        border: 2px solid teal;
+    }
+</style>
+<body style="background-color: black;color:white;">
+    <button id="Win_event_close" style="width: 25px;height: 25px;top: 2; left: 2;border-radius: 100px;">X</button>
+    <input type="text" id="input" placeholder="Shell Command" style="position: absolute;top: 30%;left: 60%;transform: translate(-50%, -50%);width: 200px;height: 15px;font-size: 16px;text-align: center;">
+    <input type="checkbox" id="checkbox" style="position: absolute;top: 30%;left: 35%;transform: translate(-50%, -50%);width: 20px;height: 20px;" checked>
+    <label for="checkbox" style="position: absolute;transform: translate(-50%, -50%);color: white;font-size: 16px;top: 30%;left: 20%;">Run as "Sudo"</label>
+    <button id="run" style="position: absolute;top: 30%;left: 90%;transform: translate(-50%, -50%);width: 50px;height: 20px;font-size: 15px;">Run</button>
+    <div>
+        <p id="Program_Name" style="position: absolute;top: 70%;left: 50%;transform: translate(-50%, -50%);font-size: 15px;">FastToolBox</p>
+    </div>
+    <p id="output" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);font-size: 15px;"></p>
+</body>
+</html>
+<script>
+    const { ipcRenderer } = require('electron');
+    const closeButton = document.getElementById('Win_event_close');
+    const runButton = document.getElementById('run');
+    const inputField = document.getElementById('input');
+    const checkbox = document.getElementById('checkbox');
+    const windowElement = document.getElementById('Window');
+
+    closeButton.addEventListener('click', () => {
+        ipcRenderer.send('close-window');
+    });
+    runButton.addEventListener('click', () => {
+        const command = inputField.value;
+        const isSudo = checkbox.checked;
+        ipcRenderer.send('run-command', { command, isSudo });
+    });
+    ipcRenderer.on('command-output', (event, output) => {
+        document.getElementById('output').textContent = output;
+    });
+    inputField.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            runButton.click();
+        }
+    });
+    windowElement.addEventListener('keypress', (event) => {
+        if (event.ctrlKey && event.altKey && event.key === 'm') {
+            ipcRenderer.send('move-window', -windowElement.offsetWidth + 10, 0);
+        }
+        if (event.ctrlKey&&event.altKey&&event.key === 'n') {
+            ipcRenderer.send('move-window', window.screen.width - 500, window.screen.height - 120);
+        }
+    });
+    
+</script>
