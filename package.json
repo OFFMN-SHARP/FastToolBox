@@ -3,13 +3,33 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-     "start": "electron ."
+    "start": "electron ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["tool", "productivity", "electron"],
+  "author": "OFFMN-SHARP",
+  "license": "MIT",
+  "description": "A fast, borderless command-line tool window.",
   "devDependencies": {
-    "electron": "^40.6.1"
+    "electron": "^40.6.1",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.offmnsharp.fasttoolbox",
+    "productName": "FastToolBox",
+    "files": [
+      "index.js",
+      "index.html",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "linux": {
+      "target": ["AppImage", "deb", "rpm"],
+      "category": "Utility"
+    },
+    "win": {
+      "target": ["nsis", "zip"]
+    }
   }
 }
